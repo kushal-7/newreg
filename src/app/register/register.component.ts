@@ -1,3 +1,4 @@
+import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -30,7 +31,7 @@ export class RegisterComponent implements OnInit {
       email: ['', Validators.compose([Validators.required,Validators.email])],
       password: new FormControl('', [Validators.required, Validators.minLength(6)]),
       pnumber: new FormControl('', [Validators.required]),
-      uname: new FormControl('', [Validators.required]),
+      dob: ['', [Validators.required, Validators.pattern(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/)]],
       cidnum: new FormControl('', [Validators.required]),
       conpassword: new FormControl('', [Validators.required]),
       
@@ -62,9 +63,18 @@ export class RegisterComponent implements OnInit {
 
   onSubmit(){
     this.submitted = true;
-    if(this.form.invalid){
-      return;
-    }
+    if(this.form.valid){
+    this.authService.register(this.form.value).subscribe((data) =>{
+      if(data.success){
+        console.log(data);
+        alert('Register Success');
+        this.router.navigateByUrl('/login');
+      }else{
+        console.log(data);
+        alert('Registeration failed. Try again');
+      }
+    });
+  }
   }
   
   ngOnInit(): void {
@@ -73,6 +83,8 @@ export class RegisterComponent implements OnInit {
 
   goToLogin(){
     this.router.navigate(['login']);
+  
   }
+ 
 
 }
